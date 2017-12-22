@@ -2,24 +2,41 @@
 
 //...........................Matrix.......................
 Matrix::Matrix(){
-	data = new Tab(0,0);
+try{
+cout << "_K.MATRIX_";
+	//atexit(koniec_programu);
+	//atexit(this->test);
+	data = new (std::nothrow) Tab(0,0);/*
+	//data* data1 = nullptr;
+	if (data1 == nullptr){
+		cout << "blad alokacji pamieci";
+		Range();
+	}*/
+		
+}catch(...){
+	cout << "\n! Wyjatek w Matrix::Matrix() !\n";
+}
 }
 
-Matrix::Matrix(unsigned int ww, unsigned int kk){
+Matrix::Matrix(unsigned int ww, unsigned int kk){cout << "_K.MATRIX_";
 	data = new Tab(ww,kk);
+	//atexit(koniec_programu);
 }
 
-Matrix::Matrix(Matrix& mat){
+Matrix::Matrix(Matrix& mat){cout << "_K.MATRIX_";
 	mat.data->n++;
 	data = mat.data;
+
 }
 
-Matrix::~Matrix(){
+Matrix::~Matrix(){cout << "_D.MATRIX_";
 	if(--data->n == 0)
 		delete data;
+
 }
 
 Matrix Matrix::operator+ (const Matrix & mat) const{
+try{
 	if(mat.data->k != data->k || mat.data->w != data->w)
 		throw Range();
 
@@ -27,6 +44,13 @@ Matrix Matrix::operator+ (const Matrix & mat) const{
 	for(int i=0; i< data->k * data->w; i++)
 		c.data->t[i] = data->t[i] + mat.data->t[i];
 	return c;
+}
+catch(...){
+	cout << "\n! Wyjatek w Matrix Matrix::operator+ !\n";
+	Matrix c(0,0);
+	return c;
+}
+
 }
 
 Matrix Matrix::operator- () const{
@@ -37,6 +61,7 @@ Matrix Matrix::operator- () const{
 }
 
 Matrix Matrix::operator- (const Matrix& mat) const{
+try{
 	if(mat.data->k != data->k || mat.data->w != data->w)
 		throw Range();	
 
@@ -45,8 +70,39 @@ Matrix Matrix::operator- (const Matrix& mat) const{
 		c.data->t[i] = data->t[i] - mat.data->t[i];
 	return c;
 }
+catch(...){
+	cout << "\n! Wyjatek w Matrix Matrix::operator- !\n";
+	
+	Matrix c(0,0);
+	return c;
+	//delete this;
+	//exit(1);
+	//abort();
+	
+}
+
+}
+
+Matrix Matrix::operator* (const double& d) const{
+	Matrix c;
+	c = *this;
+	for(int i = 0; i<data->w*data->k; i++)
+		c.data->t[i] = data->t[i] * d;
+	return c;
+
+}
+
+Matrix operator* (const double& d, const Matrix& m){
+	Matrix c;
+	c = m;
+	for(int i = 0; i< c.data->w * c.data->k; i++)
+		c.data->t[i] = m.data->t[i] * d;
+	return c;
+
+}
 
 Matrix Matrix::operator* (const Matrix& mat) const{
+try{
 	if(mat.data->w != data->k)
 		throw Range();
 
@@ -58,6 +114,12 @@ Matrix Matrix::operator* (const Matrix& mat) const{
 				for(int b = 0; b < mat.data->w; b++)
 					c.data->t[i * c.data->k + j] += data->t[a + a*i]*mat.data->t[b+j]; 
 	return c;
+}catch(...){
+	cout << "\n! Wyjatek w: Matrix Matrix::operator* (const Matrix& mat) const !\n";
+	Matrix c(0,0);
+	return c;
+}
+
 }
 
 bool Matrix::operator== (const Matrix& mat) const{
@@ -113,6 +175,7 @@ std::ostream & operator<< (std::ostream& s, const Matrix& mat){
 }
 
 Matrix& Matrix::wczytaj_z_pliku(std::string& s){
+try{
 	std::ifstream plik;	//tylko odczyt
 	//plik.open(s,std::ios::in);
 	plik.open(s.c_str());
@@ -128,6 +191,10 @@ Matrix& Matrix::wczytaj_z_pliku(std::string& s){
 	plik.close();
 	*this = c;
 	return *this;
+}catch(...){
+	cout << "\n! wyjatek w Matrix& Matrix::wczytaj_z_pliku(std::string& s) !\n";
+	return *this;
+}
 }
 
 double Matrix::operator() (const unsigned int ww, const unsigned int kk) const{
@@ -161,16 +228,28 @@ void Matrix::write(const unsigned int ww, const unsigned int kk, double dd){
 }
 //..........................Tab....................
 Matrix::Tab::Tab(unsigned int ww, unsigned int kk){
+try{
+cout << "_K.TAB_";
 	t = new (std::nothrow) double[ww*kk];
+	//t = nullptr;
+	//cout << t << " ";
+	//if (nullptr == 0 ) cout << 888;
+	if (t==nullptr){
+		cout << "blad alokacji pamieci w Tab";
+	}
 	w = ww;
 	k = kk;
 	for(int i = 0; i <w*k; i++)
 		t[i] = 0;
 	n = 1;
+}catch(...){
+	
+}
 }
 
 Matrix::Tab::~Tab(){
 	delete [] t;
+cout << "_D.TAB_";
 }
 
 Matrix::Tab* Matrix::Tab::detach(){

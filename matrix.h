@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
+#include <new>
 
 using namespace std;
 
@@ -15,13 +17,14 @@ public:
 	class Range{};	//do wyjatkow
 	Matrix();//
 	Matrix(unsigned int, unsigned int); //
-	Matrix(Matrix&);//
+	Matrix(Matrix&);
 	~Matrix();//
 
 	Matrix operator+ (const Matrix &) const;//
 	Matrix operator- () const;//
 	Matrix operator- (const Matrix &) const;//
-	Matrix operator* (const double &) const;	//trza dorobic 4 * m
+	Matrix operator* (const double &) const;
+	friend Matrix operator* (const double&, const Matrix& );
 	Matrix operator* (const Matrix &) const;//
 	Matrix& operator+= (const Matrix &);//
 	Matrix& operator-= (const Matrix &);//
@@ -43,6 +46,15 @@ public:
 	void write(const unsigned int, const unsigned int, double);
 
 	int spr_liczby_odwolan();
+	
+	void test(){cout << "test";};
+	void static koniec_programu(){
+		cout << "KONIEC";
+		//Matrix m; m.test();
+		//~Matrix();
+	};
+
+
 };
 
 class Matrix::Tab{
